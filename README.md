@@ -1,2 +1,1 @@
-# advent-of-code
-Solutions for Advent of Code puzzles
+# Solutions for Advent of Code puzzles
