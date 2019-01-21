@@ -42,11 +42,6 @@
 ;; A claim like #123 @ 3,2: 5x4 means that claim ID 123 specifies
 ;; a rectangle 3 inches from the left edge, 2 inches from the top
 ;; edge, 5 inches wide, and 4 inches tall.
-(def sample-claims ["#1 @ 1,3: 4x4" "#2 @ 3,1: 4x4" "#3 @ 5,5: 2x2"])
-
-(defn load-input [path]
-  (clojure.string/split-lines (slurp path)))
-
 (def claim-pattern
   (re-pattern "^#\\d+ @ (\\d+),(\\d+): (\\d+)x(\\d+)$"))
 
