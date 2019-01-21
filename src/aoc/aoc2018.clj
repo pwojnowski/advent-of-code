@@ -47,9 +47,6 @@
 (defn load-input [path]
   (clojure.string/split-lines (slurp path)))
 
-(def day3-input
-  (load-input "/home/przemek/poligon/clojure/aoc2018day3.input"))
-
 (def claim-pattern
   (re-pattern "^#\\d+ @ (\\d+),(\\d+): (\\d+)x(\\d+)$"))
 
@@ -74,7 +71,7 @@
        (filter #(< 1 %))
        (count)))
 
-(defn solve-day3 [claims]
+(defn solve-day03 [claims]
   (let [fabric (atom {})]
     (->> claims
          (map parse-claim)
