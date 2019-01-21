@@ -1,6 +1,6 @@
 (ns aoc.aoc2018)
 
-;;; AOC 2018 - Day 02 - part 1:
+;;; Day 02 - part 1:
 (defn only-twos-and-threes [numbers]
   (filter #(or (= 2 %1) (= 3 %1)) numbers))
 
@@ -14,7 +14,7 @@
        (vals)
        (apply *)))
 
-;;; AOC 2018 - day 2 - part 2:
+;;; Day 2 - part 2:
 (defn hamming-distance
   "Calculate Hamming distance between two strings."
   [s1 s2]
@@ -37,7 +37,7 @@
   (when (seq boxes)
     (or (try-match id boxes) (recur boxes))))
 
-;;; day 3
+;;; Day 3
 
 ;; A claim like #123 @ 3,2: 5x4 means that claim ID 123 specifies
 ;; a rectangle 3 inches from the left edge, 2 inches from the top
