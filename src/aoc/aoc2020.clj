@@ -38,3 +38,11 @@
 
 (defn day-02-2-valid-passwords [lines]
   (count (filter #(is-valid-password? new-policy-validator %) lines)))
+
+(defn day-03-1-count-trees [lines]
+  (let [len (count (first lines))]
+    (->> lines
+         ;; It's not ideal, because it would count the 0,0 tree, but...
+         (map-indexed (fn [y line] (get line (rem (* 3 y) len))))
+         (filter #(= \# %))
+         (count))))
