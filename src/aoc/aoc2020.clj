@@ -1,4 +1,5 @@
-(ns aoc.aoc2020)
+(ns aoc.aoc2020
+  (:require [clojure.string :as s]))
 
 (defn day-01-1 [lines]
   (let [nums #{} (map #(Integer/parseInt %) lines)
@@ -13,9 +14,9 @@
        (* a b (- 2020 a b))))))
 
 (defn- parse-password-policy [policy]
-  (let [[nums charStr] (clojure.string/split policy #" ")
+  (let [[nums charStr] (s/split policy #" ")
         letter (first charStr)
-        [a b] (map #(Integer/parseInt %) (clojure.string/split nums #"-"))]
+        [a b] (map #(Integer/parseInt %) (s/split nums #"-"))]
     [a b letter]))
 
 (defn- old-policy-validator [a b letter password]
@@ -29,7 +30,7 @@
          (or (= al letter) (= bl letter)))))
 
 (defn- is-valid-password? [validator-fn line]
-  (let [[policy password] (clojure.string/split line #": ")
+  (let [[policy password] (s/split line #": ")
         [a b letter] (parse-password-policy policy)]
     (validator-fn a b letter password)))
 
@@ -42,7 +43,6 @@
 (defn day-03-1-count-trees [lines]
   (let [len (count (first lines))]
     (->> lines
-         ;; It's not ideal, because it would count the 0,0 tree, but...
          (map-indexed (fn [y line] (get line (rem (* 3 y) len))))
          (filter #(= \# %))
          (count))))
