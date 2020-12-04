@@ -40,9 +40,16 @@
 (defn day-02-2-valid-passwords [lines]
   (count (filter #(is-valid-password? new-policy-validator %) lines)))
 
-(defn day-03-1-count-trees [lines x]
-  (let [len (count (first lines))]
-    (->> lines
-         (map-indexed (fn [y line] (get line (rem (* x y) len))))
+(defn day-03-count-trees [lines x]
+  (let [ys-range (range (count lines))
+        len (count (first lines))]
+    (->> (mapv (fn [y] (get (lines y) (rem (* x y) len))) ys-range)
          (filter #(= \# %))
          (count))))
+
+;; For changes: x+1, y+2
+;; (let [len (count (first lines))
+;;       ys-range (range 0 (count lines) 2)]
+;;   (->> (mapv #(get (get lines %1) (rem %2 len)) ys-range (range))
+;;        (filter #(= \# %))
+;;        (count)))
