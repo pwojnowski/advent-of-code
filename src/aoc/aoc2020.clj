@@ -56,10 +56,10 @@
 
 (def day-04-required-passport-fields #{"ecl" "pid" "eyr" "hcl" "byr" "iyr" "hgt"})
 
-(defn- day-04-1-valid-passport? [line]
+(defn- passport-with-required-fields? [line]
   (let [found-keys (set (map #(.substring % 0 3) (s/split line #"\s")))]
     (every? found-keys day-04-required-passport-fields)))
 
-(defn day-04-1-validate-passports [input]
+(defn day-04-1-check-passports [input]
   (let [lines (s/split input #"\n\n+")]
-    (count (filter day-04-valid-passport? lines))))
+    (count (filter passport-with-required-fields? lines))))
