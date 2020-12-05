@@ -56,10 +56,22 @@
 
 (def day-04-required-passport-fields #{"ecl" "pid" "eyr" "hcl" "byr" "iyr" "hgt"})
 
+(defn- has-required-keys? [found-keys]
+  (every? (set found-keys) day-04-required-passport-fields))
+
 (defn- passport-with-required-fields? [line]
-  (let [found-keys (set (map #(.substring % 0 3) (s/split line #"\s")))]
-    (every? found-keys day-04-required-passport-fields)))
+  (let [found-keys (map #(.substring % 0 3) (s/split line #"\s"))]
+    (has-required-keys? found-keys)))
 
 (defn day-04-1-check-passports [input]
   (let [lines (s/split input #"\n\n+")]
     (count (filter passport-with-required-fields? lines))))
+
+(defn- valid-passport? [line]
+  (let [parts (s/split line #"\s")
+        fields (into {} (map #(s/split % #":") parts))]
+    (keys fields)))
+
+(defn day-04-2-check-passports [input]
+  (let [lines (s/split input #"\n\n+")]
+    (count (filter valid-passport? lines))))
