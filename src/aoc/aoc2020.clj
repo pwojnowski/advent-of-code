@@ -53,3 +53,13 @@
 ;;   (->> (mapv #(get (get lines %1) (rem %2 len)) ys-range (range))
 ;;        (filter #(= \# %))
 ;;        (count)))
+
+(def day-04-required-passport-fields #{"ecl" "pid" "eyr" "hcl" "byr" "iyr" "hgt"})
+
+(defn- day-04-1-valid-passport? [line]
+  (let [found-keys (set (map #(.substring % 0 3) (s/split line #"\s")))]
+    (every? found-keys day-04-required-passport-fields)))
+
+(defn day-04-1-validate-passports [input]
+  (let [lines (s/split input #"\n\n+")]
+    (count (filter day-04-valid-passport? lines))))
