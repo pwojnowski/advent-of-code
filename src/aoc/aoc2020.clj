@@ -108,6 +108,23 @@
   (let [lines (s/split input #"\n\n+")]
     (count (filter valid-passport? lines))))
 
+(defn- day-05-find-index [code from to]
+  (if (= from to)
+    (dec to)
+    (let [mid (+ from (int (Math/ceil (/ (- to from) 2))))]
+      (if (contains? #{\F \L} (first code))
+        (recur (rest code) from (dec mid))
+        (recur (rest code) mid to)))))
+
+(defn- day-05-decode-seat-id [code]
+  (let [[row-code col-code] (split-at 7 code)]
+    (+ (* 8 (day-05-find-index row-code 1 128))
+       (day-05-find-index col-code 1 8))))
+
+(defn day-05-max-seat-id [input]
+  (let [codes (s/split input #"\n")]
+    (apply max (map day-05-decode-seat-id codes))))
+
 (defn- day-06-declarations [input counting-fn]
   (let [groups (s/split input #"\n\n+")]
     (apply + (map counting-fn groups))))
