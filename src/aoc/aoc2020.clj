@@ -108,9 +108,20 @@
   (let [lines (s/split input #"\n\n+")]
     (count (filter valid-passport? lines))))
 
-(defn- day-06-count-yes [group]
+(defn- day-06-declarations [input counting-fn]
+  (let [groups (s/split input #"\n\n+")]
+    (apply + (map counting-fn groups))))
+
+(defn- day-06-count-any-yes [group]
   (count (set (s/join (s/split group #"\s")))))
 
-(defn day-06-1-declarations [input]
-  (let [groups (s/split input #"\n\n+")]
-    (apply + (map day-06-count-yes groups))))
+(defn day-06-1-declarations [input counting-fn]
+  (day-06-declarations input day-06-count-any-yes))
+
+(defn- day-06-count-every-yes [group]
+  (->> (map set (s/split group #"\s"))
+       (apply clojure.set/intersection)
+       (count)))
+
+(defn day-06-2-declarations [input]
+  (day-06-declarations input day-06-count-every-yes))
