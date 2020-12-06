@@ -54,7 +54,35 @@
 ;;        (filter #(= \# %))
 ;;        (count)))
 
-(def day-04-required-passport-fields #{"ecl" "pid" "eyr" "hcl" "byr" "iyr" "hgt"})
+(defn- day-04-height? [data]
+  (let [partition (- (count data) 2)
+        num (.substring data 0 partition)
+        unit (.substring data partition)]
+    (when (and (re-matches #"^\d+$" num)
+               (#{"cm" "in"} unit))
+      (let [x (Integer/parseInt num)]
+        (if (= unit "cm")
+          (and (<= 150 x) (<= x 193))
+          (and (<= 59 x) (<= x 76)))))))
+
+(defn- number-in-range? [digits from to]
+  (fn [data]
+    (when (re-matches (re-pattern (str "^\\d{" digits "}$")) data)
+      (let [year (Integer/parseInt data)]
+        (and (<= from year) (<= year to))))))
+
+(def day-04-passport-fields
+  {
+   "byr" (number-in-range? 4 1920 2002)
+   "iyr" (number-in-range? 4 2010 2020)
+   "eyr" (number-in-range? 4 2020 2030)
+   "hgt" day-04-height?
+   "hcl" #(re-matches #"^#[0-9a-f]{6}$" %)
+   "ecl" #{"amb" "blu" "brn" "gry" "grn" "hzl" "oth"}
+   "pid" #(re-matches #"^\d{9}$" %)
+   })
+
+(def day-04-required-passport-fields (set (keys day-04-passport-fields)))
 
 (defn- has-required-keys? [found-keys]
   (every? (set found-keys) day-04-required-passport-fields))
@@ -67,10 +95,14 @@
   (let [lines (s/split input #"\n\n+")]
     (count (filter passport-with-required-fields? lines))))
 
+(defn- day-04-valid-field? [[k v]]
+  ((get day-04-passport-fields k identity) v))
+
 (defn- valid-passport? [line]
   (let [parts (s/split line #"\s")
         fields (into {} (map #(s/split % #":") parts))]
-    (keys fields)))
+    (and (has-required-keys? (keys fields))
+         (every? day-04-valid-field? fields))))
 
 (defn day-04-2-check-passports [input]
   (let [lines (s/split input #"\n\n+")]
