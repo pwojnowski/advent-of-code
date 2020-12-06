@@ -107,3 +107,10 @@
 (defn day-04-2-check-passports [input]
   (let [lines (s/split input #"\n\n+")]
     (count (filter valid-passport? lines))))
+
+(defn- day-06-count-yes [group]
+  (count (set (s/join (s/split group #"\s")))))
+
+(defn day-06-1-declarations [input]
+  (let [groups (s/split input #"\n\n+")]
+    (apply + (map day-06-count-yes groups))))
