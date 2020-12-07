@@ -125,6 +125,15 @@
   (let [codes (s/split input #"\n")]
     (apply max (map day-05-decode-seat-id codes))))
 
+(defn day-05-find-my-seat-id [input]
+  (let [codes (s/split input #"\n")
+        sorted (sort (map day-05-decode-seat-id codes))
+        first-id (first sorted)
+        last-id (last sorted)]
+    (->> (map #(when (not= %1 %2) %1) sorted (range first-id last-id))
+         (some #(or %))
+         (dec))))
+
 (defn- day-06-declarations [input counting-fn]
   (let [groups (s/split input #"\n\n+")]
     (apply + (map counting-fn groups))))
