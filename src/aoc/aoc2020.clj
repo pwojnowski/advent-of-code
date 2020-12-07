@@ -158,3 +158,27 @@
 
 (defn day-06-2-declarations [input]
   (day-06-declarations input day-06-count-every-yes))
+
+;;; Day 7
+(defn- parse-bag-name [content]
+  (let [[_ p1 p2] (.split content " ")]
+    (str p1 " " p2)))
+
+(defn- add-bag-to-tree [tree parent bag-desc]
+  (let [bag-name (parse-bag-name bag-desc)]
+    (update tree bag-name #(if (nil? %) #{%2} (conj % %2)) parent)))
+
+(defn- add-line-to-tree [tree line]
+  (let [[parent-bag children-data] (s/split line #" bags contain ")]
+    (if (= "no other bags." children-data)
+      tree
+      (reduce #(add-bag-to-tree % parent-bag %2) tree (s/split children-data #", ")))))
+
+(defn- day-07-1-find-bags [tree bag-name]
+  (when-let [children (get tree bag-name)]
+    (concat children (mapcat #(day-07-find-bags tree %) children))))
+
+(defn day-07-1-count-bags [input bag-name]
+  (let [lines (s/split-lines input)
+        tree (reduce #(add-line-to-tree % %2) {} lines)]
+    (count (set (day-07-find-bags tree bag-name)))))
