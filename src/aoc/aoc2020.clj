@@ -1,6 +1,7 @@
 (ns aoc.aoc2020
   (:require [clojure.string :as s]))
 
+;;; Day 1
 (defn day-01-1 [lines]
   (let [nums #{} (map #(Integer/parseInt %) lines)
         diffs (into {} (map #(vector (- 2020 %) %) nums))
@@ -13,6 +14,7 @@
      (for [a nums b nums :when (nums (- 2020 a b))]
        (* a b (- 2020 a b))))))
 
+;;; Day 2
 (defn- parse-password-policy [policy]
   (let [[nums charStr] (s/split policy #" ")
         letter (first charStr)
@@ -40,6 +42,7 @@
 (defn day-02-2-valid-passwords [lines]
   (count (filter #(is-valid-password? new-policy-validator %) lines)))
 
+;;; Day 3
 (defn day-03-count-trees [lines x]
   (let [ys-range (range (count lines))
         len (count (first lines))]
@@ -54,6 +57,7 @@
 ;;        (filter #(= \# %))
 ;;        (count)))
 
+;;; Day 4
 (defn- day-04-height? [data]
   (let [partition (- (count data) 2)
         num (.substring data 0 partition)
@@ -108,6 +112,7 @@
   (let [lines (s/split input #"\n\n+")]
     (count (filter valid-passport? lines))))
 
+;;; Day 5
 (defn- day-05-find-index [code from size]
   (if (zero? size)
     (dec from)
@@ -131,9 +136,11 @@
         first-id (first sorted)
         last-id (last sorted)]
     (->> (map #(when (not= %1 %2) %1) sorted (range first-id last-id))
-         (some #(or %))
+         (drop-while nil?)
+         (first)
          (dec))))
 
+;;; Day 6
 (defn- day-06-declarations [input counting-fn]
   (let [groups (s/split input #"\n\n+")]
     (apply + (map counting-fn groups))))
