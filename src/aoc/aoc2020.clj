@@ -108,10 +108,10 @@
   (let [lines (s/split input #"\n\n+")]
     (count (filter valid-passport? lines))))
 
-(defn- day-05-find-index [code from offset]
-  (if (zero? offset)
+(defn- day-05-find-index [code from size]
+  (if (zero? size)
     (dec from)
-    (let [mid (quot offset 2)]
+    (let [mid (quot size 2)]
       (if (contains? #{\F \L} (first code))
         (recur (rest code) from mid)
         (recur (rest code) (+ from mid) mid)))))
