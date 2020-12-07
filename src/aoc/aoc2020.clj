@@ -60,8 +60,8 @@
 ;;; Day 4
 (defn- day-04-height? [data]
   (let [partition (- (count data) 2)
-        num (.substring data 0 partition)
-        unit (.substring data partition)]
+        num (subs data 0 partition)
+        unit (subs data partition)]
     (when (and (re-matches #"^\d+$" num)
                (#{"cm" "in"} unit))
       (let [x (Integer/parseInt num)]
@@ -92,7 +92,7 @@
   (every? (set found-keys) day-04-required-passport-fields))
 
 (defn- passport-with-required-fields? [line]
-  (let [found-keys (map #(.substring % 0 3) (s/split line #"\s"))]
+  (let [found-keys (map #(subs % 0 3) (s/split line #"\s"))]
     (has-required-keys? found-keys)))
 
 (defn day-04-1-check-passports [input]
