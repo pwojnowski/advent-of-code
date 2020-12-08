@@ -196,3 +196,22 @@
   (let [lines (s/split-lines input)
         tree (reduce #(add-line-to-tree add-bag-count % %2) {} lines)]
     (day-07-2-count-bags tree bag-name)))
+
+
+;;; Day 8
+(defn- day-08-parse-instruction [data]
+  (let [[op v] (s/split data #" ")]
+    [op (Integer/parseInt v)]))
+
+(defn day-08-ax-before-loop [input]
+  (let [code (mapv day-08-parse-instruction (s/split-lines input))
+        visited (boolean-array (count code))]
+    (loop [ip 0 ax 0]
+      (if (aget visited ip)
+        ax
+        (let [[op v] (get code ip)]
+          (aset visited ip true)
+          (condp = op
+            "nop" (recur (inc ip) ax)
+            "acc" (recur (inc ip) (+ ax v))
+            "jmp" (recur (+ ip v) ax)))))))
