@@ -161,18 +161,18 @@
 
 ;;; Day 7
 (defn- parse-bag-name [content]
-  (let [[_ p1 p2] (.split content " ")]
-    (str p1 " " p2)))
+  (let [[n p1 p2] (.split content " ")]
+    [(str p1 " " p2) (Integer/parseInt n)]))
 
-(defn- add-bag-to-tree [tree parent bag-desc]
-  (let [bag-name (parse-bag-name bag-desc)]
+(defn- add-bag-name [tree parent bag-desc]
+  (let [[bag-name] (parse-bag-name bag-desc)]
     (update tree bag-name #(if (nil? %) #{%2} (conj % %2)) parent)))
 
-(defn- add-line-to-tree [tree line]
+(defn- add-line-to-tree [build-fn tree line]
   (let [[parent-bag children-data] (s/split line #" bags contain ")]
     (if (= "no other bags." children-data)
       tree
-      (reduce #(add-bag-to-tree % parent-bag %2) tree (s/split children-data #", ")))))
+      (reduce #(build-fn % parent-bag %2) tree (s/split children-data #", ")))))
 
 (defn- day-07-1-find-bags [tree bag-name]
   (when-let [children (get tree bag-name)]
@@ -180,5 +180,19 @@
 
 (defn day-07-1-count-bags [input bag-name]
   (let [lines (s/split-lines input)
-        tree (reduce #(add-line-to-tree % %2) {} lines)]
+        tree (reduce #(add-line-to-tree add-bag-name % %2) {} lines)]
     (count (set (day-07-find-bags tree bag-name)))))
+
+(defn- add-bag-count [tree parent bag-desc]
+  (let [bag (parse-bag-name bag-desc)]
+    (update tree parent #(if (nil? %) (conj {} %2) (conj % %2)) bag)))
+
+(defn- day-07-2-count-bags [tree bag-name]
+  (->> (get tree bag-name)
+       (map (fn [[bn n]] (+ n (* n (day-07-2-count-bags tree bn)))))
+       (apply +)))
+
+(defn day-07-2-count-inner-bags [input bag-name]
+  (let [lines (s/split-lines input)
+        tree (reduce #(add-line-to-tree add-bag-count % %2) {} lines)]
+    (day-07-2-count-bags tree bag-name)))
