@@ -1,6 +1,11 @@
 (ns aoc.aoc2020
   (:require [clojure.string :as s]))
 
+(defn read-numbers
+  "Parse `input' into a vector of numbers."
+  [input]
+  (mapv #(Long/parseLong %) (s/split-lines input)))
+
 ;;; Day 1
 (defn day-01-1 [lines]
   (let [nums #{} (map #(Integer/parseInt %) lines)
@@ -257,9 +262,18 @@
     (some parts (map #(- x %) parts))))
 
 (defn day-09-1-find-invalid-number [input window-size]
-  (let [numbers (mapv #(Long/parseLong %) (s/split-lines input))
+  (let [numbers (read-numbers input)
         total (count numbers)]
     (loop [i window-size]
       (if (day-09-valid-number? numbers i window-size)
         (recur (inc i))
         (get numbers i)))))
+
+(defn day-09-2-find-encryption-weakness [input target]
+  (let [numbers (read-numbers input)
+        total (count numbers)]
+    (loop [i 0 j 1 sum (+ (numbers i) (numbers j))]
+      (cond
+        (= sum target) (apply + (apply (juxt min max) (subvec numbers i j)))
+        (< sum target) (recur i (inc j) (+ sum (numbers (inc j))))
+        (> sum target) (recur (inc i) j (- sum (numbers i)))))))
