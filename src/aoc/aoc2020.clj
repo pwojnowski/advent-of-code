@@ -178,7 +178,7 @@
   (when-let [children (get tree bag-name)]
     (concat children (mapcat #(day-07-find-bags tree %) children))))
 
-(defn day-07-1-count-bags [input bag-name]
+(defn day-07-1-count-outer-bags [input bag-name]
   (let [lines (s/split-lines input)
         tree (reduce #(add-line-to-tree add-bag-name % %2) {} lines)]
     (count (set (day-07-find-bags tree bag-name)))))
@@ -215,3 +215,37 @@
             "nop" (recur (inc ip) ax)
             "acc" (recur (inc ip) (+ ax v))
             "jmp" (recur (+ ip v) ax)))))))
+
+(defn- day-08-terminates? [code]
+  (let [max-ip (count code)
+        visited (boolean-array max-ip)]
+    (loop [ip 0 ax 0]
+      (if (>= ip max-ip)
+        ax
+        (when-not (aget visited ip)
+          (let [[op v] (get code ip)]
+            (aset visited ip true)
+            (condp = op
+              "nop" (recur (inc ip) ax)
+              "acc" (recur (inc ip) (+ ax v))
+              "jmp" (recur (+ ip v) ax))))))))
+
+(defn- nop-jmp-exchange [ip [op v]]
+  (condp = op
+    "nop" [ip "jmp" v]
+    "jmp" [ip "nop" v]
+    nil))
+
+(defn- day-08-list-subs [code]
+  (filter some? (map-indexed nop-jmp-exchange code)))
+
+(defn- day-08-fixes? [code [ip op v]]
+  (let [new-code (assoc code ip [op v])]
+    (day-08-terminates? new-code)))
+
+(defn day-08-ax-after-fix [input]
+  (let [code (mapv day-08-parse-instruction (s/split-lines input))
+        substs (day-08-list-subs code)]
+    (->> (map #(day-08-fixes? code %) substs)
+         (filter some?)
+         (first))))
