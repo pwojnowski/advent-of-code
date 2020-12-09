@@ -249,3 +249,17 @@
     (->> (map #(day-08-fixes? code %) substs)
          (filter some?)
          (first))))
+
+;;; Day 9
+(defn- day-09-valid-number? [numbers i window-size]
+  (let [x (get numbers i)
+        parts (set (subvec numbers (- i window-size) i))]
+    (some parts (map #(- x %) parts))))
+
+(defn day-09-1-find-invalid-number [input window-size]
+  (let [numbers (mapv #(Long/parseLong %) (s/split-lines input))
+        total (count numbers)]
+    (loop [i window-size]
+      (if (day-09-valid-number? numbers i window-size)
+        (recur (inc i))
+        (get numbers i)))))
