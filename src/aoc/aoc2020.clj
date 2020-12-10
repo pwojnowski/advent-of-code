@@ -277,3 +277,18 @@
         (= sum target) (apply + (apply (juxt min max) (subvec numbers i j)))
         (< sum target) (recur i (inc j) (+ sum (numbers (inc j))))
         (> sum target) (recur (inc i) j (- sum (numbers i)))))))
+
+;;; Day 10
+(defn- find-joltage-diffs [[ones threes prev] x]
+  (let [diff (- prev x)]
+    (cond
+      (= diff 1) [(inc ones) threes x]
+      (= diff 3) [ones (inc threes) x]
+      :else      [ones threes x])))
+
+(defn day-10-joltage-diffs [input]
+  (let [numbers (reverse (sort (conj (read-numbers input) 0)))
+        device-joltage (+ (first numbers) 3)]
+    (->> (reduce find-joltage-diffs [0 0 device-joltage] numbers)
+         (take 2)
+         (apply *))))
