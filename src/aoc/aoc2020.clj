@@ -7,14 +7,14 @@
   (mapv #(Long/parseLong %) (s/split-lines input)))
 
 ;;; Day 1
-(defn day-01-1 [lines]
-  (let [nums #{} (map #(Integer/parseInt %) lines)
+(defn day-01-1 [input]
+  (let [nums (read-numbers input)
         diffs (into {} (map #(vector (- 2020 %) %) nums))
         x (some diffs nums)]
     (* x (diffs x))))
 
-(defn day-01-2 [lines]
-  (let [nums #{} (map #(Integer/parseInt %) lines)]
+(defn day-01-2 [input]
+  (let [nums (set (read-numbers input))]
     (first
      (for [a nums b nums :when (nums (- 2020 a b))]
        (* a b (- 2020 a b))))))
