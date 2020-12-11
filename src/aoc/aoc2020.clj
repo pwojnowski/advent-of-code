@@ -48,19 +48,19 @@
   (count (filter #(is-valid-password? new-policy-validator %) lines)))
 
 ;;; Day 3
-(defn day-03-count-trees [lines x]
-  (let [ys-range (range (count lines))
-        len (count (first lines))]
-    (->> (mapv (fn [y] (get (lines y) (rem (* x y) len))) ys-range)
-         (filter #(= \# %))
-         (count))))
+(defn- chars-on-my-way [lines [dy dx]]
+  (let [len (count lines)
+        line-len (count (first lines))]
+    (for [i (range len) :when (< (* i dy) len)]
+      (get (get lines (* i dy))
+           (rem (* i dx) line-len)))))
 
-;; For changes: x+1, y+2
-;; (let [len (count (first lines))
-;;       ys-range (range 0 (count lines) 2)]
-;;   (->> (mapv #(get (get lines %1) (rem %2 len)) ys-range (range))
-;;        (filter #(= \# %))
-;;        (count)))
+(defn- count-trees [lines slope]
+  (count (filter #(= \# %) (chars-on-my-way lines slope))))
+
+(defn day-03-count-trees [input slopes]
+  (let [lines (s/split-lines input)]
+    (apply * (map #(count-trees lines %) slopes))))
 
 ;;; Day 4
 (defn- day-04-height? [data]
