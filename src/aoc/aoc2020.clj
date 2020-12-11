@@ -292,3 +292,23 @@
     (->> (reduce find-joltage-diffs [0 0 device-joltage] numbers)
          (take 2)
          (apply *))))
+
+(defn- count-paths [graph i]
+  (if-let [adjs (graph i)]
+    (apply + (map #(count-paths graph %) adjs))
+    1))
+
+(defn- find-matching-adapters [nums]
+  (for [x nums y (rest nums) :when (#{1 2 3} (- x y))]
+    [y x]))
+
+(defn- build-arrangements-graph [nums]
+  (reduce #(update % (first %2) conj (second %2))
+          {}
+          (find-matching-adapters nums)))
+
+(defn day-10-brute-arrangements [input]
+  (let [nums (reverse (sort (conj (read-numbers input) 0)))
+        device-joltage (+ (first nums) 3)
+        nums (conj nums device-joltage)]
+    (count-paths (build-arrangements-graph nums) 0)))
