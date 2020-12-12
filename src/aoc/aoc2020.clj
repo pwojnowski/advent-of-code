@@ -294,10 +294,14 @@
          (take 2)
          (apply *))))
 
-(defn- count-paths [graph i]
-  (if-let [adjs (graph i)]
-    (apply + (map #(count-paths graph %) adjs))
-    1))
+(defn- count-paths [cache graph i]
+  (if-let [cached (@cache i)]
+    cached
+    (if-let [adjs (graph i)]
+      (let [sum (apply + (map #(count-paths cache graph %) adjs))]
+        (swap! cache assoc i sum)
+        sum)
+      1)))
 
 (defn- find-matching-adapters [nums]
   (for [x nums y (rest nums) :when (#{1 2 3} (- x y))]
@@ -308,8 +312,9 @@
           {}
           (find-matching-adapters nums)))
 
-(defn day-10-brute-arrangements [input]
+(defn day-10-dp-brute-arrangements [input]
   (let [nums (reverse (sort (conj (read-numbers input) 0)))
         device-joltage (+ (first nums) 3)
-        nums (conj nums device-joltage)]
-    (count-paths (build-arrangements-graph nums) 0)))
+        nums (conj nums device-joltage)
+        cache (atom {})]
+    (count-paths cache (build-arrangements-graph nums) 0)))
