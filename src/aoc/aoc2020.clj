@@ -1,5 +1,6 @@
 (ns aoc.aoc2020
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [clojure.set]))
 
 (defn read-numbers
   "Parse `input' into a vector of numbers."
@@ -179,7 +180,7 @@
       tree
       (reduce #(build-fn % parent-bag %2) tree (s/split children-data #", ")))))
 
-(defn- day-07-1-find-bags [tree bag-name]
+(defn- day-07-find-bags [tree bag-name]
   (when-let [children (get tree bag-name)]
     (concat children (mapcat #(day-07-find-bags tree %) children))))
 
