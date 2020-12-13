@@ -18,6 +18,12 @@
         x (some diffs nums)]
     (* x (diffs x))))
 
+(comment ;; day-01-1 ver 2:
+  (let [nums (set (read-numbers input))]
+    (->> (map #(vector (- 2020 %) %) nums)
+         (some #(when (nums (first %)) %))
+         (apply *))))
+
 (defn day-01-2 [input]
   (let [nums (set (read-numbers input))]
     (first
