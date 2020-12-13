@@ -8,7 +8,11 @@
   (mapv #(Long/parseLong %) (s/split-lines input)))
 
 ;;; Day 1
-(defn day-01-1 [input]
+(defn day-01-1
+  "Algo: x + y = 2020 -> y = 2020 - x.
+  Create a map from y to x that produced it, then find any input number in
+  that mapping - [y x]. Multiply to get the result."
+  [input]
   (let [nums (read-numbers input)
         diffs (into {} (map #(vector (- 2020 %) %) nums))
         x (some diffs nums)]
@@ -287,7 +291,9 @@
       (= diff 3) [ones (inc threes) x]
       :else      [ones threes x])))
 
-(defn day-10-joltage-diffs [input]
+(defn day-10-joltage-diffs
+  "Sort joltages and then walk through them counting how many diff by 1 or 3."
+  [input]
   (let [numbers (reverse (sort (conj (read-numbers input) 0)))
         device-joltage (+ (first numbers) 3)]
     (->> (reduce find-joltage-diffs [0 0 device-joltage] numbers)
@@ -312,7 +318,13 @@
           {}
           (find-matching-adapters nums)))
 
-(defn day-10-dp-brute-arrangements [input]
+(defn day-10-dp-brute-arrangements
+  "Sort joltages, then for each one find adapters on further than 3 from it.
+  Build graph from all found connections and then walk it counting the number
+  of possible paths from 0 to the device-joltage.
+  A cache is critical optimization. Without it, a simple brute-force, will not
+  finish in a reasonable time."
+  [input]
   (let [nums (reverse (sort (conj (read-numbers input) 0)))
         device-joltage (+ (first nums) 3)
         nums (conj nums device-joltage)
