@@ -336,3 +336,12 @@
         nums (conj nums device-joltage)
         cache (atom {})]
     (count-paths cache (build-arrangements-graph nums) 0)))
+
+
+;;; Day 11
+(defn- find-valid-positions
+  [width height seat-x seat-y]
+  (for [x (range (max 0 (dec seat-x)) (min width (+ seat-x 2)))
+        y (range (max 0 (dec seat-y)) (min height (+ seat-y 2)))
+        :when (or (not= x seat-x) (not= y seat-y))]
+    [x y]))
