@@ -1,7 +1,12 @@
-(ns aoc.utils)
+(ns aoc.utils
+  (:require [clojure.string :as s]))
+
+(defn load-file [filepath]
+  (let [abs-path (s/replace-first filepath "~" (System/getProperty "user.home"))]
+    (slurp abs-path)))
 
 (defn load-lines [filepath]
-  (clojure.string/split-lines (slurp filepath)))
+  (s/split-lines (load-file filepath)))
 
 (defn read-numbers
   "Parse `input' into a vector of numbers."

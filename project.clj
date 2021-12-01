@@ -4,4 +4,4 @@
   :license {:name "MIT"}
   :dependencies [[org.clojure/clojure "1.10.3"]]
   :main aoc.core
-  :repl-options {:init-ns aoc.aoc2020})
+  :repl-options {:init-ns aoc.aoc2021})
