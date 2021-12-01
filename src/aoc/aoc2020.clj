@@ -1,11 +1,7 @@
 (ns aoc.aoc2020
   (:require [clojure.string :as s]
-            [clojure.set]))
-
-(defn read-numbers
-  "Parse `input' into a vector of numbers."
-  [input]
-  (mapv #(Long/parseLong %) (s/split-lines input)))
+            [clojure.set]
+            [aoc.utils :refer [read-numbers]]))
 
 ;;; Day 1
 (defn day-01-1
