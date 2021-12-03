@@ -1,6 +1,5 @@
 (ns aoc.aoc2021
-  (:require [clojure.string :as s]
-            [clojure.set]
+  (:require [clojure.string :as cstr]
             [aoc.utils :refer [read-numbers]]))
 
 (defn day-01-1 [input]
@@ -25,3 +24,20 @@
           (recur sum
                  (inc i)
                  (if (< psum sum) (inc cnt) cnt)))))))
+
+(defn- day-02-read-commands [input]
+  (->> (cstr/split-lines input)
+       (map #(cstr/split % #" "))
+       (map (fn [[cmd v]] [cmd (Long/parseLong v)]))))
+
+(defn- day-02-sum-values [commands]
+  (reduce #(update % (first %2) (fnil + 0) (second %2)) {} commands))
+
+(defn- day-02-calculate-horiz-pos [sums]
+  (* (get sums "forward")
+     (- (get sums "down") (get sums "up"))))
+
+(defn day-02-1 [input]
+  (-> (day-02-read-commands input)
+      (day-02-sum-values)
+      (day-02-calculate-horiz-pos)))
