@@ -41,3 +41,17 @@
   (-> (day-02-read-commands input)
       (day-02-sum-values)
       (day-02-calculate-horiz-pos)))
+
+(defn day-02-2 [input]
+  (loop [horiz 0 depth 0 aim 0 cmds (cstr/split-lines input)]
+    (if (seq cmds)
+      (let [[cmd s] (cstr/split (first cmds) #" ")
+            val (Long/parseLong s)]
+        (condp = cmd
+          "forward" (recur (+ horiz val)
+                           (+ depth (* aim val))
+                           aim
+                           (rest cmds))
+          "up" (recur horiz depth (- aim val) (rest cmds))
+          "down" (recur horiz depth (+ aim val) (rest cmds))))
+      (* horiz depth))))
