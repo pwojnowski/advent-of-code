@@ -55,3 +55,24 @@
           "up" (recur horiz depth (- aim val) (rest cmds))
           "down" (recur horiz depth (+ aim val) (rest cmds))))
       (* horiz depth))))
+
+(defn- str->binvec [s]
+  (mapv #(- (int %) 48) s))
+
+(defn- zipsum [vectors]
+  (apply (partial map +) vectors))
+
+(defn- calculate-gamma [numbers]
+  (let [half (/ (count numbers) 2)]
+    (map #(if (pos? (- % half)) 1 0)
+         (zipsum numbers))))
+
+(defn- calculate-epsilon [gamma-vector]
+  (map #(if (zero? %) 1 0) gamma-vector))
+
+(defn day-03-1 [input]
+  (let [numbers (map str->binvec (cstr/split-lines input))
+        gv (calculate-gamma numbers)
+        ev (calculate-epsilon gv)]
+    (* (Long/parseLong (cstr/join gv) 2)
+       (Long/parseLong (cstr/join ev) 2))))
