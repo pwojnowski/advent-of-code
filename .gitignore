@@ -8,3 +8,4 @@ profiles.clj
 /.lein-*
 /.nrepl-port
 .cpcache/
+/inputs
