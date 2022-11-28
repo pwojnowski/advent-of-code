@@ -64,3 +64,24 @@
        (map day-03-find-visited-houses)
        (apply clojure.set/union)
        (count)))
+
+(def day-04-md5-digester (java.security.MessageDigest/getInstance "MD5"))
+
+(defn- day-04-get-md5 [^String s]
+  (->> (.getBytes s)
+       (.digest day-04-md5-digester)
+       (BigInteger. 1)
+       (format "%032x")))
+
+(defn day-04-find-md5-with-prefix [^String input ^String prefix]
+  (loop [n 1]
+    (let [md5 (day-04-get-md5 (str input n))]
+      (if (clojure.string/starts-with? md5 prefix)
+        n
+        (recur (inc n))))))
+
+(defn day-04-part-1 [^String input]
+  (day-04-find-md5-with-prefix input "00000"))
+
+(defn day-04-part-2 [^String input]
+  (day-04-find-md5-with-prefix input "000000"))
