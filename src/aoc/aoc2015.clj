@@ -35,3 +35,32 @@
 
 (defn day-02-part-2 [input]
   (reduce + 0 (map day-02-calculate-required-ribbon input)))
+
+(defn- day-03-dir-to-point [[x y] dir]
+  (condp = dir
+    \^ [x (inc y)]
+    \v [x (dec y)]
+    \> [(inc x) y]
+    \< [(dec x) y]))
+
+(defn- day-03-find-visited-houses [dirs]
+  (loop [houses #{[0 0]} pos [0 0] dirs dirs]
+    (if-let [dir (first dirs)]
+      (let [pos (day-03-dir-to-point pos dir)]
+        (recur (conj houses pos) pos (rest dirs)))
+      houses)))
+
+(defn day-03-part-1 [dirs]
+  (count (day-03-find-visited-houses dirs)))
+
+(defn- day-03-separate-moves [dirs]
+  (let [groups (group-by #(even? (first %)) (map-indexed #(vector % %2) dirs))
+        santas (map second (get groups true))
+        robots (map second (get groups false))]
+    [santas robots]))
+
+(defn day-03-part-2 [dirs]
+  (->> (day-03-separate-moves dirs)
+       (map day-03-find-visited-houses)
+       (apply clojure.set/union)
+       (count)))
