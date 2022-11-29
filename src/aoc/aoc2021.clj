@@ -1,9 +1,9 @@
 (ns aoc.aoc2021
   (:require [clojure.string :as cstr]
-            [aoc.utils :refer [read-numbers]]))
+            [aoc.utils :refer [->numbers]]))
 
 (defn day-01-1 [input]
-  (let [numbers (read-numbers input)
+  (let [numbers (->numbers input)
         len (count numbers)]
     (loop [prev (first numbers) xs (rest numbers) i 1 cnt 0]
       (if (= i len)
@@ -12,7 +12,7 @@
                (if (< prev (first xs)) (inc cnt) cnt))))))
 
 (defn day-01-2 [input]
-  (let [numbers (read-numbers input)
+  (let [numbers (->numbers input)
         len (count numbers)]
     (loop [psum (reduce '+ (take 3 numbers))
            i 3

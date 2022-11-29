@@ -1,7 +1,7 @@
 (ns aoc.aoc2020
   (:require [clojure.string :as s]
             [clojure.set]
-            [aoc.utils :refer [read-numbers]]))
+            [aoc.utils :refer [->numbers]]))
 
 ;;; Day 1
 (defn day-01-1
@@ -9,19 +9,19 @@
   Create a map from y to x that produced it, then find any input number in
   that mapping - [y x]. Multiply to get the result."
   [input]
-  (let [nums (read-numbers input)
+  (let [nums (->numbers input)
         diffs (into {} (map #(vector (- 2020 %) %) nums))
         x (some diffs nums)]
     (* x (diffs x))))
 
 (comment ;; day-01-1 ver 2:
-  (let [nums (set (read-numbers input))]
+  (let [nums (set (->numbers input))]
     (->> (map #(vector (- 2020 %) %) nums)
          (some #(when (nums (first %)) %))
          (apply *))))
 
 (defn day-01-2 [input]
-  (let [nums (set (read-numbers input))]
+  (let [nums (set (->numbers input))]
     (first
      (for [a nums b nums :when (nums (- 2020 a b))]
        (* a b (- 2020 a b))))))
@@ -269,7 +269,7 @@
     (some parts (map #(- x %) parts))))
 
 (defn day-09-1-find-invalid-number [input window-size]
-  (let [numbers (read-numbers input)
+  (let [numbers (->numbers input)
         total (count numbers)]
     (loop [i window-size]
       (if (day-09-valid-number? numbers i window-size)
@@ -277,7 +277,7 @@
         (get numbers i)))))
 
 (defn day-09-2-find-encryption-weakness [input target]
-  (let [numbers (read-numbers input)
+  (let [numbers (->numbers input)
         total (count numbers)]
     (loop [i 0 j 1 sum (+ (numbers i) (numbers j))]
       (cond
@@ -296,7 +296,7 @@
 (defn day-10-joltage-diffs
   "Sort joltages and then walk through them counting how many diff by 1 or 3."
   [input]
-  (let [numbers (reverse (sort (conj (read-numbers input) 0)))
+  (let [numbers (reverse (sort (conj (->numbers input) 0)))
         device-joltage (+ (first numbers) 3)]
     (->> (reduce find-joltage-diffs [0 0 device-joltage] numbers)
          (take 2)
@@ -327,7 +327,7 @@
   A cache is critical optimization. Without it, a simple brute-force, will not
   finish in a reasonable time."
   [input]
-  (let [nums (reverse (sort (conj (read-numbers input) 0)))
+  (let [nums (reverse (sort (conj (->numbers input) 0)))
         device-joltage (+ (first nums) 3)
         nums (conj nums device-joltage)
         cache (atom {})]
