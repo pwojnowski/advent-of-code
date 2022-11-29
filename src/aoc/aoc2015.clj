@@ -85,3 +85,21 @@
 
 (defn day-04-part-2 [^String input]
   (day-04-find-md5-with-prefix input "000000"))
+
+(defn- vowel? [c]
+  (#{\a \e \o \u \i} c))
+
+(defn- day-05-nice? [s]
+  (loop [s s prev nil vowels 0 twice false has-prohibited false]
+    (if-let [c (first s)]
+      (recur (rest s)
+             c
+             (if (vowel? c) (inc vowels) vowels)
+             (or twice (= c prev))
+             (or has-prohibited (#{"ab" "cd" "pq" "xy"} (str prev c))))
+      (and (>= vowels 3)
+           twice
+           (not has-prohibited)))))
+
+(defn day-05-part-1 [input]
+  (count (filter day-05-nice? input)))
