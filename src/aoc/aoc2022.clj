@@ -3,7 +3,7 @@
             [aoc.utils :refer [->numbers]]))
 
 (defn day-01 [input n]
-  (->> (s/split input #"\n\n")
+  (->> (cstr/split input #"\n\n")
        (map ->numbers)
        (mapv #(apply + %))
        (sort >)
