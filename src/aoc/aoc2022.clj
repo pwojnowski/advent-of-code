@@ -49,14 +49,27 @@
   (merge (day-03-prioritize \a \z 1)
          (day-03-prioritize \A \Z 27)))
 
-(defn- day-03-get-common-item [s]
-  (->> (split-at (/ (count s) 2) s)
-       (map set)
+(defn- day-03-get-common-item [rucksacks]
+  (->> (map set rucksacks)
        (apply clojure.set/intersection)
        (first)))
 
-(defn- day-03-item-priority [s]
-  (day-03->priority (day-03-get-common-item s)))
+(defn- day-03-item-priority [rucksacks]
+  (day-03->priority (day-03-get-common-item rucksacks)))
 
-(defn day-03-1 [input]
-  (reduce + 0 (map day-03-item-priority input)))
+(defn- day-03 [lines group-fn]
+  (->> (group-fn lines)
+       (map day-03-item-priority)
+       (reduce + 0)))
+
+(defn- day-03-1-create-groups [lines]
+  (map #(split-at (/ (count %) 2) %) lines))
+
+(defn day-03-1 [lines]
+  (day-03 lines day-03-1-create-groups))
+
+(defn- day-03-2-create-group [lines]
+  (partition 3 lines))
+
+(defn day-03-2 [input]
+  (day-03 input day-03-2-create-group))
