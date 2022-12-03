@@ -37,3 +37,26 @@
 
 (defn day-02-2 [input]
   (apply + (map day-02-2-score-round input)))
+
+
+(defn- day-03-prioritize [from-char to-char idx-start]
+  (into {}
+        (map #(vector (char %1) %2)
+             (range (int from-char) (inc (int to-char)))
+             (iterate inc idx-start))))
+
+(def day-03->priority
+  (merge (day-03-prioritize \a \z 1)
+         (day-03-prioritize \A \Z 27)))
+
+(defn- day-03-get-common-item [s]
+  (->> (split-at (/ (count s) 2) s)
+       (map set)
+       (apply clojure.set/intersection)
+       (first)))
+
+(defn- day-03-item-priority [s]
+  (day-03->priority (day-03-get-common-item s)))
+
+(defn day-03-1 [input]
+  (reduce + 0 (map day-03-item-priority input)))
