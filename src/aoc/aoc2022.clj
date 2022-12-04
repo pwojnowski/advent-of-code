@@ -73,3 +73,28 @@
 
 (defn day-03-2 [input]
   (day-03 input day-03-2-create-group))
+
+(defn- day-04->numeric-range [s]
+  (->> (cstr/split s #",")
+       (map #(cstr/split % #"-"))
+       (map (fn [[x y]] (vector (parse-long x) (parse-long y))))))
+
+(defn- day-04-fully-contained? [[[a b] [c d]]]
+  (or (= a c) (= b d) ; if ends are the same then always one range contain another
+      (and (< a c) (> b d))
+      (and (> a c) (< b d))))
+
+(defn day-04 [lines matching-fn]
+  (->> (map day-04->numeric-range lines)
+       (map matching-fn)
+       (filter true?)
+       (count)))
+
+(defn day-04-1 [lines]
+  (day-04 lines day-04-fully-contained?))
+
+(defn- day-04-overlap? [[[a b] [c d]]]
+  (not (or (< b c) (< d a))))
+
+(defn day-04-2 [lines]
+  (day-04 lines day-04-overlap?))
