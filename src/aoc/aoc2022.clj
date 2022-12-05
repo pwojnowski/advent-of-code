@@ -103,7 +103,7 @@
   (-> (cstr/trim header)
       (cstr/split  #"\s+")
       (count)
-      (repeat [])
+      (repeat (list))
       (vec)))
 
 (def ^:const day-05-crate-distance 4)
@@ -115,7 +115,7 @@
 
 (defn- day-05->crates [positions line]
   (->> (map #(get line %) positions)
-       (map-indexed #(if (= \space %2) nil (vector %1 %2)))
+       (map-indexed #(when-not (= \space %2) (vector %1 %2)))
        (filter some?)))
 
 (defn- day-05-push-crate [stacks [stack-idx crate]]
@@ -137,8 +137,8 @@
          (day-05-fill-stacks stacks))))
 
 (defn- day-05->move [line]
-  (->> (re-seq #"\d+" line)
-       (mapv (comp dec parse-long))))
+  (let [[n from to] (map parse-long (re-seq #"\d+" line))]
+    [n (dec from) (dec to)]))
 
 (defn- day-05-pop-crate [stacks idx]
   [(update-in stacks [idx] pop)
@@ -148,16 +148,28 @@
   (let [[stacks crate] (day-05-pop-crate stacks from)]
     (day-05-push-crate stacks [to crate])))
 
-(defn- day-05-apply-moves [stacks [n from to]]
+(defn day-05 [input move-applicator]
+  (let [[stacks-def moves-def] (map cstr/split-lines (cstr/split input #"\n\n"))
+        stacks (day-05->stacks stacks-def)]
+    (->> (map day-05->move moves-def)
+         (reduce move-applicator stacks)
+         (map peek)
+         (apply str))))
+
+(defn- day-05-1-apply-moves [stacks [n from to]]
   (loop [i 0 stacks stacks]
     (if (<= i n)
       (recur (inc i) (day-05-move-crate stacks from to))
       stacks)))
 
 (defn day-05-1 [input]
-  (let [[stacks-def moves-def] (map cstr/split-lines (cstr/split input #"\n\n"))
-        stacks (day-05->stacks stacks-def)]
-    (->> (map day-05->move moves-def)
-         (reduce day-05-apply-moves stacks)
-         (map peek)
-         (apply str))))
+  (day-05 input day-05-1-apply-moves))
+
+(defn- day-05-2-apply-moves [stacks [n from to]]
+  (loop [i 0 stacks stacks]
+    (if (<= i n)
+      (recur (inc i) (day-05-move-crate stacks from to))
+      stacks)))
+
+(defn day-05-2 [input]
+  (day-05 input day-05-2-apply-moves))
