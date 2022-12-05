@@ -98,3 +98,66 @@
 
 (defn day-04-2 [lines]
   (day-04 lines day-04-overlap?))
+
+(defn- day-05->empty-stacks [header]
+  (-> (cstr/trim header)
+      (cstr/split  #"\s+")
+      (count)
+      (repeat [])
+      (vec)))
+
+(def ^:const day-05-crate-distance 4)
+
+(defn- day-05-crate-positions [n-stacks]
+  (range 1
+         (- (* n-stacks day-05-crate-distance) 2)
+         day-05-crate-distance))
+
+(defn- day-05->crates [positions line]
+  (->> (map #(get line %) positions)
+       (map-indexed #(if (= \space %2) nil (vector %1 %2)))
+       (filter some?)))
+
+(defn- day-05-push-crate [stacks [stack-idx crate]]
+  (update-in stacks [stack-idx] conj crate))
+
+(defn- day-05-fill-stacks [stacks crates]
+  (if-let [row (first crates)]
+    (recur (reduce #(day-05-push-crate %1 %2) stacks row)
+           (rest crates))
+    stacks))
+
+(defn- day-05->stacks [stack-lines]
+  (let [stack-lines (reverse stack-lines)
+        stacks (day-05->empty-stacks (first stack-lines))
+        n-stacks (count stacks)
+        crate-positions (day-05-crate-positions n-stacks)]
+    (->> (rest stack-lines)
+         (map #(day-05->crates crate-positions %))
+         (day-05-fill-stacks stacks))))
+
+(defn- day-05->move [line]
+  (->> (re-seq #"\d+" line)
+       (mapv (comp dec parse-long))))
+
+(defn- day-05-pop-crate [stacks idx]
+  [(update-in stacks [idx] pop)
+   (peek (get stacks idx))])
+
+(defn- day-05-move-crate [stacks from to]
+  (let [[stacks crate] (day-05-pop-crate stacks from)]
+    (day-05-push-crate stacks [to crate])))
+
+(defn- day-05-apply-moves [stacks [n from to]]
+  (loop [i 0 stacks stacks]
+    (if (<= i n)
+      (recur (inc i) (day-05-move-crate stacks from to))
+      stacks)))
+
+(defn day-05-1 [input]
+  (let [[stacks-def moves-def] (map cstr/split-lines (cstr/split input #"\n\n"))
+        stacks (day-05->stacks stacks-def)]
+    (->> (map day-05->move moves-def)
+         (reduce day-05-apply-moves stacks)
+         (map peek)
+         (apply str))))
