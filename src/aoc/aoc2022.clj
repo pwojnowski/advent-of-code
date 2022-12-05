@@ -153,23 +153,22 @@
         stacks (day-05->stacks stacks-def)]
     (->> (map day-05->move moves-def)
          (reduce move-applicator stacks)
-         (map peek)
+         (map first)
          (apply str))))
 
 (defn- day-05-1-apply-moves [stacks [n from to]]
   (loop [i 0 stacks stacks]
-    (if (<= i n)
+    (if (< i n)
       (recur (inc i) (day-05-move-crate stacks from to))
       stacks)))
 
 (defn day-05-1 [input]
   (day-05 input day-05-1-apply-moves))
 
-(defn- day-05-2-apply-moves [stacks [n from to]]
-  (loop [i 0 stacks stacks]
-    (if (<= i n)
-      (recur (inc i) (day-05-move-crate stacks from to))
-      stacks)))
+(defn- day-05-2-apply-move [stacks [n from to]]
+  (let [crates (take n (get stacks from))]
+    (update-in (update-in stacks [to] #(concat crates %))
+               [from] #(drop n %))))
 
 (defn day-05-2 [input]
-  (day-05 input day-05-2-apply-moves))
+  (day-05 input day-05-2-apply-move))
