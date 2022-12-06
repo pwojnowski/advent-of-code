@@ -172,3 +172,15 @@
 
 (defn day-05-2 [input]
   (day-05 input day-05-2-apply-move))
+
+(defn day-06 [input n]
+  (loop [seen (apply conj (clojure.lang.PersistentQueue/EMPTY) (take n input)) i n]
+    (if (= (count (set seen)) n)
+      i
+      (recur (conj (pop seen) (get input i)) (inc i)))))
+
+(defn day-06-1 [input]
+  (day-06 input 4))
+
+(defn day-06-2 [input]
+  (day-06 input 14))
