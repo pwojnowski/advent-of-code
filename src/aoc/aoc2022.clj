@@ -184,3 +184,58 @@
 
 (defn day-06-2 [input]
   (day-06 input 14))
+
+(defn- day-07->node
+  ([name size]
+   {:name name :type :file :size size})
+  ([name size children]
+   {:name name :type :dir :size size :children children}))
+
+(defn- day-07->file [line]
+  (let [[size name] (cstr/split line #" ")]
+    (day-07->node name (parse-long size))))
+
+(defn- day-07-load-children [lines]
+  (loop [lines lines children []]
+    (let [line (first lines)]
+      (cond
+        (nil? line) [lines children]
+        (cstr/starts-with? line "$ ls") (recur (rest lines) children)
+        (cstr/starts-with? line "dir ") (recur (rest lines) children)
+        (cstr/starts-with? line "$ cd ..") [(rest lines) children]
+        (cstr/starts-with? line "$ cd") (let [[lines dir] (day-07-load-dir lines line)]
+                                          (recur lines (conj children dir)))
+        :else (recur (rest lines) (conj children (day-07->file line)))))))
+
+(defn- day-07-load-dir [lines line]
+  (let [name (nth (cstr/split line #" ") 2)
+        [lines children] (day-07-load-children (rest lines))
+        size (apply + (map :size children))]
+    [lines (day-07->node name size children)]))
+
+(defn- day-07-get-dir-sizes [fs]
+  (->> (tree-seq :children :children fs)
+       (filter #(= (:type %) :dir))
+       (map :size)))
+
+(defn- day-07-total-size [fs]
+  (->> (day-07-get-dir-sizes fs)
+       (filter #(<= % 100000))
+       (reduce + 0)))
+
+(defn day-07-1 [lines]
+  (let [fs (second (day-07-load-dir lines (first lines)))]
+    (day-07-total-size fs)))
+
+(def ^:const total-disk-space 70000000)
+(def ^:const min-required-free-space 30000000)
+
+(defn day-07-2 [lines]
+  (let [root (second (day-07-load-dir lines (first lines)))
+        used-space (:size root)
+        free-space (- total-disk-space used-space)
+        missing (- min-required-free-space free-space)]
+    (->> (day-07-get-dir-sizes root)
+         (filter #(<= missing %))
+         (sort)
+         (first))))
