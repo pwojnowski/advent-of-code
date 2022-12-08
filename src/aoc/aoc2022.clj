@@ -201,6 +201,8 @@
   (let [[size name] (cstr/split line #" ")]
     (day-07->node name (parse-long size))))
 
+(declare day-07-load-dir)
+
 (defn- day-07-load-children [lines]
   (loop [lines lines children []]
     (let [line (first lines)]
@@ -209,7 +211,7 @@
         (cstr/starts-with? line "$ ls") (recur (rest lines) children)
         (cstr/starts-with? line "dir ") (recur (rest lines) children)
         (cstr/starts-with? line "$ cd ..") [(rest lines) children]
-        (cstr/starts-with? line "$ cd") (let [[lines dir] (day-07-load-dir lines line)]
+        (cstr/starts-with? line "$ cd") (let [[lines dir] (trampoline day-07-load-dir lines line)]
                                           (recur lines (conj children dir)))
         :else (recur (rest lines) (conj children (day-07->file line)))))))
 
