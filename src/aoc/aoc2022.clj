@@ -2,6 +2,7 @@
   (:require [clojure.string :as cstr]
             [aoc.utils :refer [->numbers]]))
 
+;;; Day 1
 (defn day-01 [input n]
   (->> (cstr/split input #"\n\n")
        (map ->numbers)
@@ -10,6 +11,7 @@
        (take n)
        (apply +)))
 
+;;; Day 2
 (def day-02-1-choice-scores {\X 1 \Y 2 \Z 3})
 
 (def day-02-1-score-table
@@ -38,7 +40,7 @@
 (defn day-02-2 [input]
   (apply + (map day-02-2-score-round input)))
 
-
+;;; Day 3
 (defn- day-03-prioritize [from-char to-char idx-start]
   (into {}
         (map #(vector (char %1) %2)
@@ -74,6 +76,7 @@
 (defn day-03-2 [input]
   (day-03 input day-03-2-create-group))
 
+;;; Day 4
 (defn- day-04->numeric-range [s]
   (->> (cstr/split s #",")
        (map #(cstr/split % #"-"))
@@ -99,6 +102,7 @@
 (defn day-04-2 [lines]
   (day-04 lines day-04-overlap?))
 
+;;; Day 5
 (defn- day-05->empty-stacks [header]
   (-> (cstr/trim header)
       (cstr/split  #"\s+")
@@ -173,6 +177,7 @@
 (defn day-05-2 [input]
   (day-05 input day-05-2-apply-move))
 
+;;; Day 6
 (defn day-06 [input n]
   (loop [seen (apply conj (clojure.lang.PersistentQueue/EMPTY) (take n input)) i n]
     (if (= (count (set seen)) n)
@@ -185,6 +190,7 @@
 (defn day-06-2 [input]
   (day-06 input 14))
 
+;;; Day 7
 (defn- day-07->node
   ([name size]
    {:name name :type :file :size size})
