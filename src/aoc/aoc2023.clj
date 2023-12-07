@@ -4,7 +4,7 @@
 
 ;;; Day 1
 (defn day-01 [input preprocessor]
-  (->> (cstr/split input #"\n")
+  (->> (cstr/split-lines input)
        (map preprocessor)
        (map #(vector (first %) (last %)))
        (map cstr/join)
@@ -24,3 +24,25 @@
 
 (defn day-01-2 [input]
   (day-01 input find-digits))
+
+;;; Day 2
+(def cube-limits {"red" 12, "green" 13, "blue" 14})
+
+(defn- day-02->cube-and-limits [game-line]
+  (->> (re-seq #"(\d+) (blue|red|green)" game-line)
+       (mapv #(vector (cube-limits (nth % 2)) (parse-long (second %))))))
+
+(defn day-02-exceeds-limit? [[limit revealed]]
+  (< limit revealed))
+
+(defn- day-02->possible? [game-line]
+  (not-any? day-02-exceeds-limit? (day-02->cube-and-limits game-line)))
+
+(defn day-02->game-id [game-line]
+  (parse-long (second (re-find #"Game (\d+)" game-line))))
+
+(defn day-02-1 [input]
+  (->> (cstr/split-lines input)
+       (filter day-02->possible?)
+       (mapv day-02->game-id)
+       (apply +)))
