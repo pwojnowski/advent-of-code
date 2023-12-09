@@ -46,3 +46,15 @@
        (filter day-02->possible?)
        (mapv day-02->game-id)
        (apply +)))
+
+(defn- day-02-min-power [game-line]
+  (->> (re-seq #"(\d+) (blue|red|green)" game-line)
+       (mapv #(vector (nth % 2) (parse-long (second %))))
+       (reduce #(update %1 (first %2) (fnil max 0) (second %2)) {})
+       (vals)
+       (apply *)))
+
+(defn day-02-2 [input]
+  (->> (cstr/split-lines input)
+       (mapv day-02-min-power)
+       (apply +)))
